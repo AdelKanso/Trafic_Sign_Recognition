@@ -9,6 +9,7 @@ A machine learning project for detecting and classifying German traffic signs us
 - macOS, Linux, or Windows
 - ~0.5 GB of free disk space (for the dataset)
 - pip (Python package manager)
+- dataset https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign
 
 ## Installation
 
