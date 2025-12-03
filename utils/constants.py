@@ -1,6 +1,7 @@
 DATA_PATH = "dataset/gtsrb_dataset/"
 META_DIR = "Meta/"
 TRAIN_DIR = DATA_PATH+"Train/"
+TRAIN_MODEL = 1 # 0: Our Model, 1: ResNet18, 2: MobileNetV2
 
 SIGN_CLASSES = {
     0: "Speed limit (20km/h)",

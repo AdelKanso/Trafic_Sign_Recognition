@@ -1,4 +1,10 @@
+import numpy as np
 import torch
+import torch.nn as nn
+import torch.optim as optim
+from tqdm import tqdm
+
+from evaluation.visualization import show_final_comparison_window
 
 
 def train(model, train_loader, val_loader,device, criterion, optimizer, epochs=30, patience=5):
@@ -8,7 +14,7 @@ def train(model, train_loader, val_loader,device, criterion, optimizer, epochs=3
     best_val_loss = float('inf')
     patience_counter = 0
 
-    for epoch in range(epochs):
+    for epoch in tqdm(range(epochs), desc="Training"):
         model.train()
         correct, total, running_loss = 0, 0, 0
 
@@ -54,8 +60,6 @@ def train(model, train_loader, val_loader,device, criterion, optimizer, epochs=3
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            # will be used testing on video
-            torch.save(model.state_dict(), "best_model.pth")
             patience_counter = 0
         else:
             patience_counter += 1
@@ -63,6 +67,48 @@ def train(model, train_loader, val_loader,device, criterion, optimizer, epochs=3
                 print("Early stopping triggered")
                 break
 
-    model.load_state_dict(torch.load("best_model.pth"))
+    return train_accs, val_accs, train_losses, val_losses
+
+
+def train_and_compare(model, name,
+                      train_loader, val_loader, test_loader,
+                      X_test_t, y_test, device,
+                      return_curves=False):
+
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+    results = train(
+        model, train_loader, val_loader,
+        device, criterion, optimizer, epochs=2
+    )
+
+    if return_curves:
+        train_accs, val_accs, train_losses, val_losses = results
+    else:
+        train_accs = val_accs = train_losses = val_losses = None
+
+    model.eval()
+    all_preds = []
+
+    with torch.no_grad():
+        for (images,) in test_loader:
+            images = images.to(device)
+            outputs = model(images)
+            preds = outputs.argmax(1)
+            all_preds.append(preds.cpu().numpy())
+
+    predictions = np.hstack(all_preds)
+
+    show_final_comparison_window(
+        y_true=y_test,
+        y_pred=predictions,
+        model=model,
+        X_test_t=X_test_t,
+        device=device,
+        dataset_name="GTSRB",
+        model_name=name
+    )
+
     return train_accs, val_accs, train_losses, val_losses
 
