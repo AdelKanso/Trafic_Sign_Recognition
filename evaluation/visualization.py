@@ -118,10 +118,6 @@ def show_test_predictions(X_test, y_test, predictions):
 
 
 def plot_pr_curve(y_true, y_probs, num_classes):
-    print("✅ y_true shape:", y_true.shape)
-    print("✅ y_probs shape:", y_probs.shape)
-
-    # One-vs-Rest binarization
     y_true_bin = label_binarize(y_true, classes=range(num_classes))
 
     precision, recall, _ = precision_recall_curve(
@@ -146,9 +142,6 @@ def plot_pr_curve(y_true, y_probs, num_classes):
 
 
 def plot_class_accuracy(y_true, y_pred, class_names):
-    """
-    Plots per-class accuracy in percentage.
-    """
     num_classes = len(class_names)
     class_acc = []
 
@@ -200,21 +193,18 @@ def show_final_comparison_window(
     dataset_name="GTSRB",
     model_name="Ours"
 ):
-    # ---- Accuracy & F1 ----
     acc = accuracy_score(y_true, y_pred)
     f1  = f1_score(y_true, y_pred, average="weighted")
 
-    # ---- Model Size (MB) ----
     buffer = io.BytesIO()
     torch.save(model.state_dict(), buffer)
     model_size_mb = buffer.getbuffer().nbytes / (1024 ** 2)
 
-    # ---- Inference Time (ms/image) ----
     model.eval()
     x = X_test_t[:200].to(device)  # test on 200 images only (fast)
 
     with torch.no_grad():
-        for _ in range(5):   # warm-up
+        for _ in range(5):   
             _ = model(x[:16])
 
         t0 = time.time()
@@ -223,7 +213,6 @@ def show_final_comparison_window(
 
     avg_time_ms = (t1 - t0) / x.shape[0] * 1000
 
-    # ---- Final DataFrame ----
     df = pd.DataFrame({
         "Dataset": [dataset_name],
         "Model": [model_name],
@@ -233,7 +222,6 @@ def show_final_comparison_window(
         "Inference Time (ms/img)": [round(avg_time_ms, 2)]
     })
 
-    # ---- SHOW AS WINDOW TABLE ----
     fig, ax = plt.subplots(figsize=(10, 3))
     ax.axis("off")
 

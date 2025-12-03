@@ -54,6 +54,7 @@ def main():
 
     X_test_t = torch.tensor(X_test).permute(0, 3, 1, 2) / 255.0
     test_loader = DataLoader(TensorDataset(X_test_t), batch_size=64)
+    
     if(TRAIN_MODEL == 0):
         model = CNN(num_classes=43).to(device)
 
@@ -158,7 +159,6 @@ def main():
             device=device,
             return_curves=False
         )
-        pass
       
         
     input("\nPress ENTER to close")
