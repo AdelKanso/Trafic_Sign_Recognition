@@ -5,9 +5,10 @@ import torch.optim as optim
 from tqdm import tqdm
 
 from evaluation.visualization import show_final_comparison_window
+from utils.constants import DATASET_FLAG
 
 
-def train(model, train_loader, val_loader,device, criterion, optimizer, epochs=30, patience=5):
+def train(model, train_loader, val_loader, device, criterion, optimizer, epochs=30, patience=5):
     train_accs, val_accs = [], []
     train_losses, val_losses = [], []
 
@@ -92,13 +93,15 @@ def train_and_compare(model, name,
     all_preds = []
 
     with torch.no_grad():
-        for (images,) in test_loader:
-            images = images.to(device)
+        for batch in test_loader:
+            images = batch[0].to(device)
             outputs = model(images)
             preds = outputs.argmax(1)
             all_preds.append(preds.cpu().numpy())
 
     predictions = np.hstack(all_preds)
+
+    dataset_name = "GTSRB" if DATASET_FLAG == 0 else "BELGIUM"
 
     show_final_comparison_window(
         y_true=y_test,
@@ -106,9 +109,8 @@ def train_and_compare(model, name,
         model=model,
         X_test_t=X_test_t,
         device=device,
-        dataset_name="GTSRB",
+        dataset_name=dataset_name,
         model_name=name
     )
 
     return train_accs, val_accs, train_losses, val_losses
-

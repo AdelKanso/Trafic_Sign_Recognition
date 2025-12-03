@@ -1,9 +1,9 @@
-
 import torch.nn as nn
+from utils.constants import NUM_CLASSES
 
 
 class CNN(nn.Module):
-    def __init__(self, num_classes=43):
+    def __init__(self, num_classes=NUM_CLASSES):
         super().__init__()
 
         self.features = nn.Sequential(

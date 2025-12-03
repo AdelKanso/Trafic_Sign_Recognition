@@ -1,7 +1,7 @@
 import matplotlib
+import numpy as np
 
 matplotlib.use("TkAgg")
-import numpy as np
 import torch
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from torch.utils.data import DataLoader, TensorDataset
@@ -21,14 +21,23 @@ from evaluation.visualization import (
 from model.alternatives import build_mobile_net, build_resnet18
 from model.cnn import CNN
 from training.training import train_and_compare
-from utils.constants import DATA_PATH, SIGN_CLASSES, TRAIN_DIR, TRAIN_MODEL
+from utils.constants import (
+    DATA_PATH,
+    DATASET_FLAG,
+    NUM_CLASSES,
+    SIGN_CLASSES,
+    TRAIN_DIR,
+    TRAIN_MODEL,
+)
 from utils.file_loader import FilePath
 
 
 def main():
     files = FilePath()
     files.load_all()
-    show_meta_images(files.meta_files)
+    if DATASET_FLAG == 0 and TRAIN_MODEL==0:
+        show_meta_images(files.meta_files)
+
 
     X_train, X_val, y_train, y_val = load_and_split_training_data(TRAIN_DIR)
     X_test, y_test = load_test_data(DATA_PATH, files.test_csv)
@@ -56,7 +65,7 @@ def main():
     test_loader = DataLoader(TensorDataset(X_test_t), batch_size=64)
     
     if(TRAIN_MODEL == 0):
-        model = CNN(num_classes=43).to(device)
+        model = CNN(num_classes=NUM_CLASSES).to(device)
 
         train_accs, val_accs, train_losses, val_losses = train_and_compare(
             model=model,
@@ -70,8 +79,8 @@ def main():
             return_curves=True   
         )
         
-
-        plot_training_curves(train_accs, val_accs, train_losses, val_losses)
+        if DATASET_FLAG == 0:
+            plot_training_curves(train_accs, val_accs, train_losses, val_losses)
 
         model.eval()
         
@@ -83,56 +92,50 @@ def main():
                 images = images.to(device)
                 outputs = model(images)
                 
-                probs = torch.softmax(outputs, dim=1)   # probabilities
-                preds = probs.argmax(1)                # class labels
+                probs = torch.softmax(outputs, dim=1)
+                preds = probs.argmax(1)
                 
                 all_probs.append(probs.cpu().numpy())
                 all_preds.append(preds.cpu().numpy())   
 
-
         all_probs = np.vstack(all_probs)
         predictions = np.hstack(all_preds)
 
-        
-        plot_pr_curve(
-            y_true=y_test,
-            y_probs=all_probs,
-            num_classes=43
-        )
+        if DATASET_FLAG == 0:
+            plot_pr_curve(
+                y_true=y_test,
+                y_probs=all_probs,
+                num_classes=NUM_CLASSES
+            )
 
+            print("Test Accuracy:", accuracy_score(y_test, predictions))
+            print(classification_report(
+                y_test,
+                predictions,
+                target_names=[SIGN_CLASSES[i] for i in sorted(SIGN_CLASSES)]
+            ))
 
-        print("Test Accuracy:", accuracy_score(y_test, predictions))
-        print(classification_report(
-            y_test,
-            predictions,
-            target_names=[SIGN_CLASSES[i] for i in sorted(SIGN_CLASSES)]
-        ))
+            cm = confusion_matrix(y_test, predictions)
+            plot_confusion_matrix(cm, [SIGN_CLASSES[i] for i in sorted(SIGN_CLASSES)])
 
+            show_test_predictions(X_test, y_test, predictions)
 
-        cm = confusion_matrix(y_test, predictions)
-        plot_confusion_matrix(cm)
+            plot_class_accuracy(
+                y_true=y_test,
+                y_pred=predictions,
+                class_names=[SIGN_CLASSES[i] for i in sorted(SIGN_CLASSES)]
+            )
 
-        show_test_predictions(X_test, y_test, predictions)
+            image_tensor = X_test_t[0].to(device)
 
-
-        plot_class_accuracy(
-            y_true=y_test,
-            y_pred=predictions,
-            class_names=[SIGN_CLASSES[i] for i in sorted(SIGN_CLASSES)]
-        )
-
-        # Take one test image (for example: index 0)
-        image_tensor = X_test_t[0].to(device)
-
-        plot_single_image_probabilities(
-            model,
-            image_tensor,
-            [SIGN_CLASSES[i] for i in sorted(SIGN_CLASSES)]
-        )
-
+            plot_single_image_probabilities(
+                model,
+                image_tensor,
+                [SIGN_CLASSES[i] for i in sorted(SIGN_CLASSES)]
+            )
 
     if(TRAIN_MODEL == 1):
-        resnet_model = build_resnet18(num_classes=43).to(device)
+        resnet_model = build_resnet18(num_classes=NUM_CLASSES).to(device)
 
         train_and_compare(
             model=resnet_model,
@@ -147,7 +150,7 @@ def main():
         )
         
     if(TRAIN_MODEL == 2):
-        mobile_net_model = build_mobile_net(num_classes=43).to(device)
+        mobile_net_model = build_mobile_net(num_classes=NUM_CLASSES).to(device)
         train_and_compare(
             model=mobile_net_model,
             name="MobileNetV2",
@@ -160,8 +163,8 @@ def main():
             return_curves=False
         )
       
-        
     input("\nPress ENTER to close")
+
 
 if __name__ == '__main__':
     main()

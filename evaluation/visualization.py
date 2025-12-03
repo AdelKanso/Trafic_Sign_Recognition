@@ -62,13 +62,24 @@ def plot_training_curves(train_accs, val_accs, train_losses, val_losses):
     plt.legend()
     plt.show()
 
-def plot_confusion_matrix(cm):
+def plot_confusion_matrix(cm, class_names):
+    plt.figure(figsize=(10, 8))
     plt.imshow(cm, cmap="Blues")
     plt.title("Confusion Matrix")
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.colorbar()
+
+    plt.xticks(range(len(class_names)), class_names, rotation=90, fontsize=8)
+    plt.yticks(range(len(class_names)), class_names, fontsize=8)
+
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            plt.text(j, i, cm[i, j], ha="center", va="center", fontsize=7)
+
+    plt.tight_layout()
     plt.show()
+
 
 
 def show_test_predictions(X_test, y_test, predictions):

@@ -1,7 +1,7 @@
 import glob
 import os
 import pandas as pd
-from utils.constants import DATA_PATH
+from utils.constants import DATASET_FLAG, DATA_PATH, TRAIN_DIR, META_DIR
 
 
 class FilePath:
@@ -12,7 +12,10 @@ class FilePath:
         self.test_csv = None
 
     def load_all(self):
-        self.meta_files = glob.glob(os.path.join(DATA_PATH, "Meta", "*.*"))
-        self.meta_csv = pd.read_csv(os.path.join(DATA_PATH, "Meta.csv"))
-        self.train_dir = os.listdir(os.path.join(DATA_PATH, "Train"))
-        self.test_csv = pd.read_csv(os.path.join(DATA_PATH, "Test.csv"))
+        if DATASET_FLAG == 0:
+            self.meta_files = glob.glob(os.path.join(DATA_PATH, META_DIR, "*.*"))
+            self.meta_csv = pd.read_csv(os.path.join(DATA_PATH, "Meta.csv"))
+            self.train_dir = os.listdir(os.path.join(DATA_PATH, "Train"))
+            self.test_csv = pd.read_csv(os.path.join(DATA_PATH, "Test.csv"))
+        else:
+            self.train_dir = os.listdir(TRAIN_DIR)
