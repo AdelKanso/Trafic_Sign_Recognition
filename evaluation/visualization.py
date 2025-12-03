@@ -146,7 +146,7 @@ def plot_pr_curve(y_true, y_probs, num_classes):
     plt.plot(recall, precision)
     plt.xlabel("Recall")
     plt.ylabel("Precision")
-    plt.title(f"Micro-Average PR Curve (AP = {ap_score:.4f})")
+    plt.title(f"Micro PR Curve (AP = {ap_score:.4f})")
     plt.grid()
 
     plt.show(block=True)
@@ -247,6 +247,6 @@ def show_final_comparison_window(
     table.set_fontsize(11)
     table.scale(1.2, 1.5)
 
-    plt.title("Final Model Comparison Table", fontsize=14, pad=10)
+    plt.title("Comparison Table", fontsize=14, pad=10)
     plt.tight_layout()
     plt.show()
