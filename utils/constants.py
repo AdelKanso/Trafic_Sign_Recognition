@@ -6,7 +6,10 @@ TRAIN_MODEL = 0 # 0: Our Model, 1: ResNet18, 2: MobileNetV2
 
 
 if DATASET_FLAG == 0:
-    DATA_PATH = "dataset/gtsrb_dataset/"
+
+    DATA_PATH = r"C:\Users\samer\Desktop\Project_M2\ML_DL_Project\Trafic_Sign_Recognition\dataset\gtsrb_dataset/"
+    META_DIR = "Meta/"
+
     TRAIN_DIR = DATA_PATH + "Train/"
     TEST_DIR = DATA_PATH + "Test/"
     META_DIR = "Meta/"
@@ -60,7 +63,10 @@ if DATASET_FLAG == 0:
     NUM_CLASSES = 43
 
 elif DATASET_FLAG == 1:
-    DATA_PATH = "dataset/belgium/"
+
+    DATA_PATH = r"C:\Users\samer\Desktop\Project_M2\ML_DL_Project\Trafic_Sign_Recognition\dataset\belgium/"
+    META_DIR = None
+
     TRAIN_DIR = DATA_PATH + "Training/"
     TEST_DIR = DATA_PATH + "Testing/"
 

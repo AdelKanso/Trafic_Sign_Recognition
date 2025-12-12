@@ -21,6 +21,8 @@ def train(model, train_loader, val_loader, device, criterion, optimizer, epochs=
 
         for images, labels in train_loader:
             images, labels = images.to(device), labels.to(device)
+            # 💡 FIX 1: Convert labels to torch.long for CrossEntropyLoss/CUDA compatibility
+            labels = labels.long() 
 
             optimizer.zero_grad()
             loss = criterion(model(images), labels)
@@ -41,6 +43,9 @@ def train(model, train_loader, val_loader, device, criterion, optimizer, epochs=
         with torch.no_grad():
             for images, labels in val_loader:
                 images, labels = images.to(device), labels.to(device)
+                # 💡 FIX 2: Convert labels to torch.long for validation loss calculation
+                labels = labels.long() 
+                
                 loss = criterion(model(images), labels)
 
                 preds = model(images).argmax(1)
@@ -81,7 +86,7 @@ def train_and_compare(model, name,
 
     results = train(
         model, train_loader, val_loader,
-        device, criterion, optimizer, epochs=2
+        device, criterion, optimizer, epochs=19
     )
 
     if return_curves:
