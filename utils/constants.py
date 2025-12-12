@@ -9,7 +9,8 @@ if DATASET_FLAG == 0:
     DATA_PATH = "dataset/gtsrb_dataset/"
     TRAIN_DIR = DATA_PATH + "Train/"
     TEST_DIR = DATA_PATH + "Test/"
-
+    META_DIR = "Meta/"
+    
     SIGN_CLASSES = {
         0: "Speed limit (20km/h)",
         1: "Speed limit (30km/h)",

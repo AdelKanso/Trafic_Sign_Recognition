@@ -15,6 +15,7 @@ from sklearn.metrics import (
 )
 from sklearn.preprocessing import label_binarize
 
+from utils.common import softmax_with_temperature
 from utils.constants import SIGN_CLASSES
 
 
@@ -161,7 +162,7 @@ def plot_class_accuracy(y_true, y_pred, class_names):
         if np.sum(idx) == 0:
             acc = 0
         else:
-            acc = np.mean(y_pred[idx] == y_true[idx]) * 100  # ✅ percent
+            acc = np.mean(y_pred[idx] == y_true[idx]) * 100 
 
         class_acc.append(acc)
 
@@ -181,8 +182,8 @@ def plot_single_image_probabilities(model, image_tensor, class_names):
     model.eval()
 
     with torch.no_grad():
-        output = model(image_tensor.unsqueeze(0))  # add batch dim
-        probs = torch.softmax(output, dim=1).cpu().numpy()[0] * 100
+        logits = model(image_tensor.unsqueeze(0))
+        probs = softmax_with_temperature(logits, T=3.0).cpu().numpy()[0] * 100
 
     plt.figure(figsize=(16, 6))
     plt.bar(range(len(class_names)), probs)
