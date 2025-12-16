@@ -33,13 +33,15 @@ If `requirements.txt` is not present, install manually:
 pip install numpy pandas opencv-python Pillow matplotlib scikit-learn torch torchvision scipy
 ```
 
+## Report
+can be found under root folder
+
 ## License
 
 This project uses the GTSRB dataset from Kaggle. Please refer to the dataset's license terms.
 This project uses the BelgiumTS dataset from btsd. Please refer to the dataset's license terms.
 
 ## References
-
 - [GTSRB Dataset](https://www.kaggle.com/datasets/meowmeowmeowmeow/gtsrb-german-traffic-sign)
 - [BelgiumTS Dataset](https://btsd.ethz.ch/shareddata/)
 - [Original GTSRB Paper](http://benchmark.ini.rub.de/)
