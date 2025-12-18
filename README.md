@@ -1,4 +1,4 @@
-# Traffic Sign Detection (GTSRB)
+# Traffic Sign Recognition (GTSRB)
 
 A machine learning project for detecting and classifying German traffic signs using the GTSRB (German Traffic Sign Recognition Benchmark) dataset. This project uses a **Convolutional Neural Network (CNN)** trained on augmented traffic sign images to achieve high accuracy classification.
 
