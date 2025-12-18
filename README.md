@@ -33,8 +33,9 @@ If `requirements.txt` is not present, install manually:
 pip install numpy pandas opencv-python Pillow matplotlib scikit-learn torch torchvision scipy
 ```
 
-## Report
-can be found under root folder
+## Result
+Check the Report/Presentation for more info about result and the whole project implementation. can be found under root folder
+
 
 ## License
 

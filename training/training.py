@@ -86,7 +86,7 @@ def train_and_compare(model, name,
 
     results = train(
         model, train_loader, val_loader,
-        device, criterion, optimizer, epochs=19
+        device, criterion, optimizer, epochs=20
     )
 
     if return_curves:

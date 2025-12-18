@@ -184,7 +184,8 @@ def plot_single_image_probabilities(model, image_tensor, class_names):
     with torch.no_grad():
         logits = model(image_tensor.unsqueeze(0))
         probs = softmax_with_temperature(logits, T=3.0).cpu().numpy()[0] * 100
-
+    for c, p in zip(class_names, probs):
+        print(c, p)
     plt.figure(figsize=(16, 6))
     plt.bar(range(len(class_names)), probs)
     plt.xticks(range(len(class_names)), class_names, rotation=90)
